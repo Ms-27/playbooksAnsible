@@ -1,0 +1,41 @@
+---
+
+- hosts: conteneurs
+
+  tasks: 
+         - name: Update des paquets
+           apt:
+                   update_cache: yes
+                   upgrade: yes
+
+         - name: Install mariadb-server
+           apt: 
+                   name: mariadb-server
+                   state: present
+
+         - name: Démarrer Mysql
+           service: 
+                   name: mysql
+                   state: started
+
+         - name: Install PyMySQL
+           pip: 
+                   executable: /usr/bin/pip3
+                   name: PyMySQL
+                   state: present
+
+         - name: Créer BDD
+           mysql_db: 
+                   config_file: /etc/mysql/my.cnf
+                   name: newdb
+                   login_unix_socket: /var/run/mysqld/mysqld.sock
+                   state: present
+
+         - name: Créer user pour la bdd
+           mysql_user: 
+                   config_file: /etc/mysql/my.cnf
+                   name: autom
+                   password: autom
+                   priv: 'newdb.*:ALL'
+                   login_unix_socket: /var/run/mysqld/mysqld.sock
+                   state: present
