@@ -1,0 +1,12 @@
+---
+
+- hosts: conteneurs
+  gather_facts: false
+
+  tasks:
+          - name: Transférer ficheir.txt
+            copy:
+                    src: fichier.txt
+                    dest: ~/
+                    mode: u=rw,g=r,o=r
+

@@ -2,7 +2,11 @@
 
 - hosts: conteneurs
 
-  tasks: 
+  tasks:
+         - name: Charger les variables
+           include_vars:
+                   file: variables.yaml
+             
          - name: Update des paquets
            apt:
                    update_cache: yes
@@ -34,8 +38,8 @@
          - name: Créer user pour la bdd
            mysql_user: 
                    config_file: /etc/mysql/my.cnf
-                   name: autom
-                   password: autom
+                   name: "{{ user_name }}"
+                   password: "{{ user_passwd }}"
                    priv: 'newdb.*:ALL'
                    login_unix_socket: /var/run/mysqld/mysqld.sock
                    state: present

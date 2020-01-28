@@ -1,0 +1,10 @@
+---
+
+- hosts: conteneurs
+  gather_facts: false
+
+  tasks:
+          - name: Transférer fichier.txt avec var
+            template:
+                    src: fichier.txt.j2
+                    dest: ~/fichier2.txt

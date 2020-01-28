@@ -1,0 +1,67 @@
+---
+
+- hosts: localhost
+  gather_facts: false
+
+  vars:
+          conteneurs:
+                  conteneur1: 10.0.0.2
+                  conteneur2: 10.0.0.3
+                  conteneur3: 10.0.0.4
+                  conteneur4: 10.0.0.5
+
+  tasks:
+          #          - name: Installation de pip
+          #            apt:
+          #                    update_cache: yes
+          #                    name: python3-pip
+          #                    state: present
+
+          - name: Installation module docker
+            pip:
+                    executable: /usr/bin/pip3
+                    name: docker
+                    state: present
+                  
+          - name: Créer le sous-réseau
+            docker_network:
+                    name: subnet0
+                    ipam_config:
+                            - gateway: 10.0.0.254
+                              iprange: 10.0.0.0/24
+                              subnet: 10.0.0.0/24
+
+          - name: Déployer les conteneurs
+            docker_container:
+                    hostname: "{{ item.key }}"
+                    image: debian_ansible:latest
+                    name: "{{ item.key }}"
+                    state: started
+                    tty: yes
+                    pull: no
+                    purge_networks: yes
+                    networks:
+                            - name: subnet0
+                              ipv4_address: "{{ item.value }}"
+            loop: "{{ conteneurs | dict2items }}"
+
+          - name: Démarrer SSH sur les conteneurs
+            shell: for ct in $(docker ps -q) ; do docker exec -t $ct service ssh start ; done
+
+          - name: Ajouter les conteneurs au fichier /etc/hosts
+            lineinfile: 
+                    line: "{{ item.value }} {{ item.key }}"
+                    path: /etc/hosts
+                    state: present
+            loop: "{{ conteneurs | dict2items }}"
+
+          - name: Ajouter un groupe dans /etc/ansible/hosts
+            lineinfile:
+                    line: [conteneurs]
+                    path: /etc/ansible/hosts
+
+          - name: Ajouter les conteneurs au fichier /etc/ansible/hosts
+            lineinfile:
+                    line: "{{ item.key }}"
+                    path: /etc/ansible/hosts
+            loop: "{{ conteneurs | dict2items }}"

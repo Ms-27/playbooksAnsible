@@ -1,0 +1,26 @@
+---
+
+- hosts: conteneurs
+
+  tasks:
+          - name: Mise à jour des paquets
+            apt:
+                    update_cache: yes
+                    upgrade: yes
+
+          - name: Installation serveur apache
+            apt:
+                    name: apache2
+                    state: present
+
+          - name: Transférer le fichier de conf apache
+            template:
+                    src: conf_apache_template.j2 
+                    dest: /etc/apache2/sites-available/000-default.conf
+            notify: Redémarrer Apache
+
+  handlers:
+          - name: Redémarrer Apache
+            service:
+                    name: apache2
+                    state: started
