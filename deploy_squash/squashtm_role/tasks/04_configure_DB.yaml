@@ -1,0 +1,36 @@
+---
+          - name: Maj des paquets
+            apt:
+                    update_cache: yes
+                    upgrade: yes
+
+          - name: Installer PyMySQL
+            pip:
+                    executable: /usr/bin/pip3
+                    name: PyMySQL
+                    state: present
+
+          - name: Créer BDD
+            mysql_db:
+                    config_file: /etc/mysql/my.cnf
+                    name: "{{ db_name }}"
+                    login_unix_socket: /var/run/mysqld/mysqld.sock
+                    state: present
+
+          - name: Créer user pour la bdd
+            mysql_user:
+                    config_file: /etc/mysql/my.cnf
+                    name: "{{ user_name }}"
+                    password: "{{ user_passwd }}"
+                    priv: '{{ db_name }}.*:ALL'
+                    login_unix_socket: /var/run/mysqld/mysqld.sock
+                    state: present
+
+          - name: Peupler la BDD
+            mysql_db:
+                    config_file: /etc/mysql/my.cnf
+                    login_unix_socket: /var/run/mysqld/mysqld.sock
+                    name: "{{ db_name }}"
+                    state: import
+                    target: /usr/share/dbconfig-common/data/squash-tm/install/mysql
+            ignore_errors: yes

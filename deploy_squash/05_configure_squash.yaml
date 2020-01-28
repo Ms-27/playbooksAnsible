@@ -1,0 +1,30 @@
+---
+
+- hosts: squashtm
+
+  tasks:
+          - name: Charger les variables
+            include_vars:
+                    file: vars.yaml
+
+          - name: Transférer le fichier de conf de squash
+            template:
+                    src: squash-tm.j2
+                    dest: /etc/default/squash-tm
+            notify: Redémarrer Squash
+
+          - name: Patcher le script de squash pour utilisation via service
+            replace:
+                    backup: yes
+                    path: /etc/init.d/squash-tm
+                    regexp: 'start-stop-daemon --stop --quiet --retry.*$'
+                    replace: 'start-stop-daemon --stop --quiet --retry=TERM/30/KILL/5 --pidfile ${PID_FILE} --user ${SQUASH_USER}'
+            notify: Redémarrer Squash
+
+  handlers:
+           - name: Redémarrer Squash
+             service:
+                     name: squash-tm
+                     state: restarted
+
+# passwd encrypt: root

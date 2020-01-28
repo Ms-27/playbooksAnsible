@@ -1,0 +1,9 @@
+---
+# vars file for squashtm_role
+#
+paquets:
+        - openjdk-11-jre
+        - mariadb-server
+        - gnupg2
+squash_repo: "deb http://repo.squashtest.org/debian buster main"
+squash_key: "http://repo.squashtest.org/repo.squashtest.org.gpg.key"

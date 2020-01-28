@@ -1,0 +1,6 @@
+---
+
+- hosts: conteneur_squash
+  gather_facts: false
+
+  tasks:

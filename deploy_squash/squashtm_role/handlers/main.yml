@@ -1,0 +1,12 @@
+---
+# handlers file for squashtm_role
+#
+- name: Lancer Mariadb
+  service:
+          name: mysql
+          state: started
+
+- name: Redémarrer Squash
+  service:
+          name: squash-tm
+          state: restarted

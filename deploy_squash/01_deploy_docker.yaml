@@ -1,0 +1,35 @@
+---
+
+- hosts: localhost
+  gather_facts: false
+
+  tasks:
+          - name: Installation module docker
+            pip:
+                    executable: /usr/bin/pip3
+                    name: docker
+                    state: present
+
+          - name: Créer le sosu-réseau
+            docker_network:
+                    name: subnet0
+                    ipam_config:
+                            - gateway: 10.0.0.254
+                              iprange: 10.0.0.0/24
+                              subnet: 10.0.0.0/24
+
+          - name: Déployer un conteneur
+            docker_container:
+                    hostname: squashtm2
+                    image: debian_ansible:latest
+                    name: squashtm2
+                    state: started
+                    tty: yes
+                    pull: no
+                    purge_networks: yes
+                    networks:
+                            - name: subnet0
+                              ipv4_address: 10.0.0.7
+
+          - name: Démarrer SSH sur le conteneur
+            shell: for ct in $(docker ps -q) ; do docker exec -t $ct service ssh start ; done

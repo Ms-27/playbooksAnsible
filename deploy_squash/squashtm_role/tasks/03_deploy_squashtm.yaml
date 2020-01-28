@@ -1,0 +1,15 @@
+---
+          - name: Ajouter le lien du dépôt
+            copy:
+                    content: "{{ squash_repo }}"
+                    dest: /etc/apt/sources.list.d/squash-tm.list
+
+          - name: Récupérer la clé gpg
+            apt_key:
+                    url: "{{ squash_key }}"
+
+          - name: Installer Squash TM
+            apt:
+                    update_cache: yes
+                    name: squash-tm
+                    state: present

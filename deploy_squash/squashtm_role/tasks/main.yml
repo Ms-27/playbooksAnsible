@@ -1,0 +1,11 @@
+---
+# tasks file for squashtm_role
+#
+- name: Inclure les tâches des playbooks
+  include_tasks:
+          file: "{{ item }}"
+  with_items:
+          - 02_install_java_DB.yaml
+          - 03_deploy_squashtm.yaml
+          - 04_configure_DB.yaml
+          - 05_configure_squash.yaml

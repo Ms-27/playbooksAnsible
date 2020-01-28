@@ -1,0 +1,28 @@
+---
+
+- hosts: squashtm
+
+  vars:
+          paquets:
+                  - openjdk-11-jre
+                  - mariadb-server
+                  - gnupg2
+  tasks:
+          - name: Mise à jour des paquets
+            apt:
+                    update_cache: yes
+                    upgrade: yes
+
+          - name: Installation des paquets
+            apt:
+                    name: "{{ item }}"
+                    state: present
+            loop: "{{ paquets }}"
+            notify: Lancer Mariadb
+
+  handlers:
+          - name: Lancer Mariadb
+            service:
+                    name: mysql
+                    state: started
+

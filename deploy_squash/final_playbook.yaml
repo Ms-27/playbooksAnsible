@@ -1,0 +1,14 @@
+---
+
+- name: Déployer conteneur
+  import_playbook: 01_deploy_docker.yaml
+
+- hosts: squashtm2
+ 
+  vars:
+          db_name: squashtm
+          user_name: autom
+          user_passwd: autom
+
+  roles:
+          - squashtm_role
